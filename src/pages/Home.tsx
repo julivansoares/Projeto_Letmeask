@@ -3,19 +3,25 @@ import { Button } from '../components/Button';
 import illustrationImg from '../assets/images/illustration.svg'
 import logoImg from '../assets/images/logo.svg';
 import googleIconImg from '../assets/images/google-icon.svg';
-import {auth, firebase} from '../services/firebase'
+
 import '../styles/auth.scss';
+import { useAuth } from '../hooks/useAuth';
+
+
+
 
 export function Home(){
   const navigate = useNavigate();
   
-  function handleCreateRoom(){
-    const provider =new firebase.auth.GoogleAuthProvider(); 
-    
-    auth.signInWithPopup(provider).then(result =>{
-      console.log(result);
-    })
-    navigate('/roms/new');
+  const {user, signInWithGoogle} = useAuth()
+
+  async function handleCreateRoom(){
+
+    if(!user){
+      await signInWithGoogle()
+    }
+
+    navigate('/roms/new');  
   }
 
 
@@ -27,8 +33,8 @@ export function Home(){
          <strong>  Crie salas de Q&A ao-vivo</strong>
          <p> Tireas dúvidas da  sua audiencia em tempo-real</p>    
        </aside>
-        <main className='main-content'>
-         <div>
+        <main> 
+         <div  className='main-content'>
             <img src={logoImg} alt="Letmeask" />    
               <button onClick={handleCreateRoom} className="create-room">
                 <img src={googleIconImg} alt="Logo do Google" />
